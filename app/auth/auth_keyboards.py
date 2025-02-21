@@ -7,7 +7,7 @@ auth_confirm_keyboard = InlineKeyboardMarkup(
             [
                 InlineKeyboardButton(
                     text="Окей",
-                    callback_data="auth_confirm",
+                    callback_data="rules_confirm",
                 ),
             ],
         ],
