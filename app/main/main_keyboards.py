@@ -30,14 +30,30 @@ main_keyboard = InlineKeyboardMarkup(
         ],
     )
 
-register_keyboard = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="Записаться",
-                callback_data="register",
-            ),
+
+def get_register_keyboard(
+        is_register: bool
+):
+    if not is_register:
+        return InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text="Записаться",
+                        callback_data="register",
+                    ),
+                ],
+            ],
+        )
+
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Отписаться",
+                    callback_data="register",
+                ),
+            ],
         ],
-    ],
-)
+    )
 

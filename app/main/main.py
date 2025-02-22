@@ -3,8 +3,8 @@ from aiogram.loggers import event
 from aiogram.types import CallbackQuery
 
 from app.database.models import User
-from app.database.requests import request_user_object, get_events, get_event, add_user_to_event
-from app.main.main_keyboards import main_keyboard, register_keyboard
+from app.database.requests import request_user_object, get_events, get_event, add_user_to_event, is_user_added_event
+from app.main.main_keyboards import main_keyboard, get_register_keyboard
 from app.utils.paginate_keyboard import paginate_inline_keyboard
 
 main = Router()
@@ -64,7 +64,12 @@ async def event_detail_callback(callback: CallbackQuery):
     await callback.message.edit_text(
         f"Название: {event.name}\n\n"
         f"Описание: {event.description}",
-        reply_markup=register_keyboard
+        reply_markup=get_register_keyboard(
+            is_user_added_event(
+                user_id=callback.message.chat.id,
+                event_id=1,
+            ),
+        ),
     )
 
 @main.callback_query(F.data == "register")

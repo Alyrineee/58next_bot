@@ -1,7 +1,7 @@
 from aiogram.loggers import event
 from sqlalchemy import select
 
-from app.database.models import User, async_session, Event
+from app.database.models import User, async_session, Event, event_members
 
 
 async def request_user_object(
@@ -44,3 +44,15 @@ async def add_user_to_event(user_id: int, event_id: int):
         if user and event:
             event.members.append(user)
             await session.commit()
+
+async def is_user_added_event(user_id: int, event_id: int):
+    async with async_session() as session:
+        result = await session.execute(
+            select(event_members)
+            .where(event_members.event_id == event_id, event_members.user_id==user_id)
+        )
+        if result:
+            return True
+
+        return False
+
