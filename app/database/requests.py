@@ -1,5 +1,6 @@
 from aiogram.loggers import event
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.database.models import User, async_session, Event, event_members
 
@@ -45,14 +46,24 @@ async def add_user_to_event(user_id: int, event_id: int):
             event.members.append(user)
             await session.commit()
 
-async def is_user_added_event(user_id: int, event_id: int):
+async def is_user_added_event(user_id: int, event_id: int) -> bool:
     async with async_session() as session:
         result = await session.execute(
             select(event_members)
-            .where(event_members.event_id == event_id, event_members.user_id==user_id)
+            .where(event_members.c.event_id == event_id, event_members.c.user_id == user_id)
         )
-        if result:
-            return True
+        row = result.first()
+        return row is not None
 
-        return False
 
+async def remove_user_from_event(user_id: int, event_id: int):
+    async with async_session() as session:
+        query = select(Event).options(selectinload(Event.members)).where(Event.id == event_id)
+        result = await session.execute(query)
+        event = result.scalar_one_or_none()
+
+        if event:
+            user = await session.get(User, user_id)
+            if user and user in event.members:
+                event.members.remove(user)
+                await session.commit()

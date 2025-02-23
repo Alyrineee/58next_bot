@@ -3,7 +3,8 @@ from aiogram.loggers import event
 from aiogram.types import CallbackQuery
 
 from app.database.models import User
-from app.database.requests import request_user_object, get_events, get_event, add_user_to_event, is_user_added_event
+from app.database.requests import (request_user_object, get_events, get_event,
+                                   add_user_to_event, is_user_added_event, remove_user_from_event)
 from app.main.main_keyboards import main_keyboard, get_register_keyboard
 from app.utils.paginate_keyboard import paginate_inline_keyboard
 
@@ -65,7 +66,7 @@ async def event_detail_callback(callback: CallbackQuery):
         f"Название: {event.name}\n\n"
         f"Описание: {event.description}",
         reply_markup=get_register_keyboard(
-            is_user_added_event(
+            await is_user_added_event(
                 user_id=callback.message.chat.id,
                 event_id=1,
             ),
@@ -81,4 +82,16 @@ async def register_callback(callback: CallbackQuery):
     )
     await callback.message.answer(
         "Ты записался"
+    )
+
+
+@main.callback_query(F.data == "unregister")
+async def register_callback(callback: CallbackQuery):
+    await callback.answer()
+    await remove_user_from_event(
+        user_id=callback.message.chat.id,
+        event_id=1
+    )
+    await callback.message.answer(
+        "Ты отписался"
     )

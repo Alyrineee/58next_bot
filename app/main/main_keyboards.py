@@ -51,7 +51,7 @@ def get_register_keyboard(
             [
                 InlineKeyboardButton(
                     text="Отписаться",
-                    callback_data="register",
+                    callback_data="unregister",
                 ),
             ],
         ],
