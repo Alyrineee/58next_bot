@@ -6,7 +6,7 @@ auth_confirm_keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="Окей",
+                    text="Меню",
                     callback_data="rules_confirm",
                 ),
             ],

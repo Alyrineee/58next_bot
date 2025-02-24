@@ -4,10 +4,21 @@ from sqlalchemy.orm import selectinload
 
 from app.database.models import User, async_session, Event, event_members
 
+async def is_user_registered(
+        telegram_id: int
+):
+    async with async_session() as session:
+        query = select(User).where(User.telegram_id == telegram_id)
+        result = await session.execute(query)
+        user = result.scalars().all()
+        if not user:
+            return False
+        else:
+            return user[0]
 
 async def request_user_object(
         telegram_id: int,
-        user_class="",
+        user_class: str,
 ):
     async with async_session() as session:
         query = select(User).where(User.telegram_id == telegram_id)

@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery
 
 from app.database.models import User
 from app.database.requests import (request_user_object, get_events, get_event,
-                                   add_user_to_event, is_user_added_event, remove_user_from_event)
+                                   add_user_to_event, is_user_added_event, remove_user_from_event, is_user_registered)
 from app.main.main_keyboards import main_keyboard, get_register_keyboard
 from app.utils.paginate_keyboard import paginate_inline_keyboard
 
@@ -18,10 +18,10 @@ async def start(callback: CallbackQuery):
     )
 
 
-@main.callback_query(F.data == "teams")
-async def teams_callback(callback: CallbackQuery):
-    await callback.answer()
-    return await callback.message.answer("Пока не работает: (")
+# @main.callback_query(F.data == "teams")
+# async def teams_callback(callback: CallbackQuery):
+#     await callback.answer()
+#     return await callback.message.answer("Пока не работает: (")
 
 
 @main.callback_query(F.data == "events")
@@ -50,7 +50,7 @@ async def rating_callback(callback: CallbackQuery):
 @main.callback_query(F.data == "profile")
 async def profile_callback(callback: CallbackQuery):
     await callback.answer()
-    user = await request_user_object(
+    user = await is_user_registered(
         callback.message.chat.id
     )
     return await callback.message.answer(

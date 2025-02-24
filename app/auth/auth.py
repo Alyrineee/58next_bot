@@ -5,17 +5,21 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 
 from app.auth.auth_keyboards import auth_confirm_keyboard
-from app.database.requests import request_user_object
+from app.database.requests import request_user_object, is_user_registered
 from app.utils.paginate_keyboard import paginate_inline_keyboard
 
 auth = Router()
 
 @auth.message(CommandStart())
 async def start(message: Message):
+    if await is_user_registered(message.from_user.id):
+        return await message.answer(
+            "Приветик, нашел тебя в базе: )\n\nДобро пожаловать",
+            reply_markup=auth_confirm_keyboard,
+        )
+
     await message.answer("Приветик, не могу найти тебя в базе( Надо пройти регистрацию")
     await asyncio.sleep(2)
-
-    # Это пока тестовый вариант: ) Не судите строго
     return await message.answer(
         "Чтобы зарегистрироваться выбери класс",
         reply_markup=paginate_inline_keyboard(
